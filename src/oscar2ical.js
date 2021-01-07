@@ -1,7 +1,7 @@
 "use strict";
 
 import $ from 'jquery';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import ical from 'ical-generator';
 import {saveAs} from 'file-saver';
 
@@ -48,8 +48,8 @@ function readPageAsICal() {
             var dateArr = dateStr.split(" - ");
             if (dateArr.length != 2) return;
 
-            var fromDate = moment(dateArr[0], dateFormat).startOf('day');
-            var toDate = moment(dateArr[1], dateFormat).endOf('day');
+            var fromDate = moment.tz(dateArr[0], dateFormat, 'America/New_York').startOf('day').utc();
+            var toDate = moment.tz(dateArr[1], dateFormat, 'America/New_York').endOf('day').utc();
 
             var dayStr = columns.eq(2).text().toUpperCase();
             var days = [];
@@ -66,21 +66,22 @@ function readPageAsICal() {
             var timeArr = timeStr.split(" - ");
             if (timeArr.length != 2) return;
 
-            var fromTime = moment(timeArr[0], timeFormat);
-            var toTime = moment(timeArr[1], timeFormat);
+            var fromTime = moment.tz(timeArr[0], timeFormat, 'America/New_York').utc();
+            var toTime = moment.tz(timeArr[1], timeFormat, 'America/New_York').utc();
 
             // Find the first session
-            var firstDay = moment(days[0], "dd");
+            var firstDay = moment.tz(days[0], "dd", 'America/New_York').utc();
             var firstSessionBegin = fromDate.clone().day(firstDay.day()).hour(fromTime.hour()).minute(fromTime.minute());
             var firstSessionEnd = firstSessionBegin.clone().add(moment.duration(toTime.diff(fromTime)));
 
             cal.createEvent({
-                start: firstSessionBegin.toDate(),
-                end: firstSessionEnd.toDate(),
+                start: firstSessionBegin,
+                end: firstSessionEnd,
                 timestamp: new Date(),
                 summary: name,
                 description: info,
                 location: location,
+                timezone: 'America/New_York',
                 repeating: {
                     freq: 'WEEKLY',
                     until: toDate.toDate(),
