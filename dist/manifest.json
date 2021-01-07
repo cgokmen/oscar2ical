@@ -6,7 +6,7 @@
     "manifest_version": 2,
     "content_scripts": [
         {
-            "matches": ["https://oscar.gatech.edu/pls/bprod/bwskfshd.P_CrseSchdDetl"],
+            "matches": ["https://oscar.gatech.edu/bprod/bwskfshd.P_CrseSchdDetl"],
             "all_frames": true,
             "css": ["oscar2ical.css"],
             "js": ["bundle.js"]
